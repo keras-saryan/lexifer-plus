@@ -1,0 +1,71 @@
+.navbar {
+  background-color: #eeeeee !important;
+}
+
+.navbar-brand {
+  color: #000000 !important;
+}
+
+.brand-lexifer {
+  color: #000000;
+}
+
+.brand-plus {
+  color: #de0000;
+}
+
+.navbar-brand:hover .brand-plus {
+  color: #000000;
+}
+
+body {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+a:hover, a:focus {
+  color: #000000 !important;
+}
+
+textarea {
+  background-color: #eeeeee !important;
+  color: #000000 !important;
+}
+
+input[type="number"] {
+  background-color: #eeeeee !important;
+  color: #000000 !important;
+}
+
+input[type="checkbox"] {
+  background-color: #eeeeee;
+}
+
+input[type="checkbox"]:checked::before {
+  content: '';
+  position: absolute;
+  top: 0.15em;
+  left: 0.35em;
+  width: 0.3em;
+  height: 0.6em;
+  border: solid #000000;
+  border-width: 0 0.2em 0.2em 0;
+  transform: rotate(45deg);
+}
+
+input:hover {
+  background-color: #dddddd !important;
+}
+
+button, .btn {
+  background-color: #eeeeee !important;
+  color: #000000 !important;
+}
+
+button:hover, .btn:hover {
+  background-color: #dddddd !important;
+}
+
+footer {
+  color: #555555 !important;
+}

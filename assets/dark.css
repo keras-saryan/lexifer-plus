@@ -1,0 +1,71 @@
+.navbar {
+  background-color: #222222 !important;
+}
+
+.navbar-brand {
+  color: #ffffff !important;
+}
+
+.brand-lexifer {
+  color: #ffffff;
+}
+
+.brand-plus {
+  color: #de0000;
+}
+
+.navbar-brand:hover .brand-plus {
+  color: #ffffff;
+}
+
+body {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+a:hover, a:focus {
+  color: #ffffff !important;
+}
+
+textarea {
+  background-color: #222222 !important;
+  color: #ffffff !important;
+}
+
+input[type="number"] {
+  background-color: #222222 !important;
+  color: #ffffff !important;
+}
+
+input[type="checkbox"] {
+  background-color: #222222;
+}
+
+input[type="checkbox"]:checked::before {
+  content: '';
+  position: absolute;
+  top: 0.15em;
+  left: 0.35em;
+  width: 0.3em;
+  height: 0.6em;
+  border: solid #ffffff;
+  border-width: 0 0.2em 0.2em 0;
+  transform: rotate(45deg);
+}
+
+input:hover {
+  background-color: #444444 !important;
+}
+
+button, .btn {
+  background-color: #222222 !important;
+  color: #ffffff !important;
+}
+
+button:hover, .btn:hover {
+  background-color: #444444 !important;
+}
+
+footer {
+  color: #999999 !important;
+}

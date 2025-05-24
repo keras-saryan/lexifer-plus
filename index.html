@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<!-- saved from url=(0047)https://lingweenie.org/conlang/lexifer-app.html -->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Lexifer Plus</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Gentium+Plus:wght@300;600&display=swap" rel="stylesheet" />
+    <link rel="icon" href="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ctext x='0' y='12' font-size='12'%3E📝%3C/text%3E%3C/svg%3E" type="image/svg+xml" />
+    <link rel="stylesheet" href="./assets/bootstrap.min.css" />
+    <link rel="stylesheet" href="./assets/common.css" />
+    <link id="serif-font" rel="stylesheet" href="./assets/serif.css" disabled />
+    <link id="dark-theme" rel="stylesheet" href="./assets/dark.css" />
+    <link id="light-theme" rel="stylesheet" href="./assets/light.css" disabled />
+    <script defer src="./assets/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script defer src="./assets/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+    <script defer src="./assets/bootstrap.min.js"></script>
+    <script defer src="./assets/lexifer.min.js"></script>
+    <script defer src="./assets/lexifer-examples.js"></script>
+    <script defer src="./assets/lexifer-plus.js"></script>
+  </head>
+
+  <body class="mx-auto full-width">
+    <nav class="navbar">
+      <a class="navbar-brand" href="./" target="_self">📝 <span class="brand-lexifer">Lexifer</span> <span class="brand-plus">Plus</span></a>
+      <span id="switches">
+        <span id="shortcut-help" style="cursor: pointer; font-size: 1.75rem; margin-left: 0.5em;" title="Show keyboard shortcut cheat sheet">❓</span>
+        <span id="font-toggle" style="cursor: pointer; font-size: 1.75rem; margin-left: 0.5em;" title="Toggle sans/serif fonts">✒️</span>
+        <span id="theme-toggle" style="cursor: pointer; font-size: 1.75rem; margin-left: 0.5em;" title="Toggle dark/light themes">🌞</span>
+      </span>
+    </nav>
+
+    <div id="shortcut-cheats" style=" display: none; position: fixed; top: 10%; left: 50%; transform: translateX(-50%); background-color: #777777; color: #ffffff; padding: 2em; border-radius: 0.5em; max-width: 650px; z-index: 1000;         box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); font-size: 0.95rem;">
+      <span style="font-weight: 600;">Keyboard Shortcuts (<code>Ctrl</code>/<code>⌘</code> + <code>Shift</code> + <code>…</code>)</span>
+      <ul id="shortcut-list" style="margin: 1em 0em; padding-left: 1em;">
+        <li><code>?</code> – Open/close shortcut cheat sheet</li>
+        <li><code>F</code> – Switch between sans/serif fonts</li>
+        <li><code>L</code> – Switch between dark/light themes</li>
+        <li><code>I</code> – Import definition file</li>
+        <li><code>E</code> – Export definition file</li>
+        <li><code>↑</code> – Increase number of words by 10</li>
+        <li><code>↓</code> – Decrease number of words by 10</li>
+        <li><code>U</code> – Leave output unsorted on/off</li>
+        <li><code>O</code> – Display only one word per line on/off</li>
+        <li><code>A</code> – Display all generation steps on/off</li>
+        <li><code>G</code> – Generate words</li>
+        <li><code>C</code> – Copy output</li>
+        <li><code>S</code> – Save output</li>
+        <li><code>P</code> – Share page</li>
+        <li><code>X</code> – Clear the definition textarea</li>
+      </ul>
+      <button id="close-shortcut-cheats" class="btn btn-primary mr-1" >Close</button>
+    </div>
+
+    <main class="container">
+      <br />
+      <p>
+        Lexifer Plus is an adaptation of <a href="https://lingweenie.org/conlang/lexifer-app.html" target="_blank">Lexifer Online</a> by <a href="https://www.lingweenie.org/" target="_blank">Wm Annis</a> and <a href="https://www.reddit.com/user/bbrk24/" target="_blank">u/bbrk24</a>. See the <a href="https://github.com/bbrk24/lexifer-ts/blob/master/docs/grammar.md" target="_blank">original documentation</a> for more information.
+      </p>
+
+      <p>
+        Load an example definition file (will overwrite current definition):
+        <button type="button" class="btn btn-primary mr-1" onclick="lexiferExample(&#39;basic&#39;)" fdprocessedid="s6mclm">Default</button>
+        <button type="button" class="btn btn-primary mr-1" onclick="lexiferExample(&#39;basic-ex&#39;)" fdprocessedid="x84oc9">Default (With Comments)</button>
+        <button type="button" class="btn btn-primary mr-1" onclick="lexiferExample(&#39;tonal&#39;)" fdprocessedid="xz4pqd">Tonal</button>
+        <button type="button" class="btn btn-primary mr-1" onclick="lexiferExample(&#39;hungarian&#39;)" fdprocessedid="6vplog">(Fake) Hungarian</button>
+      </p>
+
+      <p>
+        Use your own definition files:
+        <button type="button" class="btn btn-primary mr-1" id="loadFileBtn">Import Definitions</button>
+        <input type="file" id="hiddenFileInput" accept=".def" style="display: none;" />
+        <button type="button" class="btn btn-primary mr-1" id="saveFileBtn">Export Definitions</button>
+      </p>
+
+      <textarea id="def" rows="13" class="scroll" style="border-radius: 0.25em" title="Type, import or drag-and-drop your definition file here" >
+with: std-ipa-features std-assimilations coronal-metathesis
+
+letters: ʔ a á b ch d e g h i k l m n o p r s t u w y
+
+C = t n k m ch l ʔ s r d h w b y p g
+D = n l ʔ t k r p
+V = a i e á u o
+
+$S = CVD?
+
+words: V?$S$S V?$S V?$S$S$S
+
+# haplology
+reject: (..+)\1+
+
+reject: wu yi w$ y$ h$ ʔʔ (p|t|k|ʔ)h
+filter: nr > tr; mr > pr; ŋ > n
+</textarea>
+      <br />
+      <label for="number">Number of words (leave blank for a paragraph):</label>
+      <input type="number" autocomplete="off" id="number" min="0" fdprocessedid="lz21x" style="border-radius: 0.125em" />
+      <br />
+      <input type="checkbox" id="unsorted" />
+      <label for="unsorted">Leave output unsorted</label>
+      <br />
+      <input type="checkbox" id="one-per-line" />
+      <label for="one-per-line">Display only one word per line</label>
+      <br />
+      <input type="checkbox" id="verbose" />
+      <label for="verbose">Display all generation steps</label>
+      <br />
+      <p>
+        <button type="button" class="btn btn-primary mr-1" onclick="genWords()">Generate</button>
+        <button type="button" class="btn btn-primary mr-1" onclick="copyResult()">Copy Output</button>
+        <button type="button" class="btn btn-primary mr-1" id="saveResultBtn">Save Output</button>
+        <button type="button" class="btn btn-primary mr-1" onclick="shareDefinition()">Share Page</button>
+      </p>
+      <p id="errors" style="white-space: normal;"></p>
+      <p id="result"></p>
+      <br />
+    </main>
+
+    <footer>
+      <p>This adaptation by <a href="https://keras-saryan.github.io/" target="_blank">Keras Saryan</a></p>
+      <p>
+        Original <a href="https://lingweenie.org/conlang/lexifer-app.html" target="_blank">Lexifer Online</a> by <a href="https://www.lingweenie.org/" target="_blank">Wm Annis</a> and <a href="https://www.reddit.com/user/bbrk24/" target="_blank">u/bbrk24</a>
+      </p>
+      <p>
+        <a href="https://creativecommons.org/licenses/by-sa/3.0/us/" target="_blank" title="CC BY-SA"><img src="./assets/cc-by-sa.png" /></a>
+      </p>
+    </footer>
+
+  </body>
+</html>
