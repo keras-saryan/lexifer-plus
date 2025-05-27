@@ -35,12 +35,12 @@
       </span>
     </nav>
 
-    <div id="shortcut-cheats" style=" display: none; position: fixed; top: 10%; left: 50%; transform: translateX(-50%); background-color: #777777; color: #ffffff; padding: 2em; border-radius: 0.5em; max-width: 650px; max-height: 80vh; overflow-y: auto; z-index: 1000; box-shadow: 0 0 20px #00000080; font-size: 0.95rem;">
+    <div id="shortcut-cheats">
       <span style="font-weight: 600;">Keyboard Shortcuts (<code>Ctrl</code>/<code>⌘</code> + <code>Shift</code> + <code>…</code>)</span>
-      <ul id="shortcut-list" style="margin: 1em 0em; padding-left: 1em;">
+      <ul id="shortcut-list">
         <li><code>?</code> – Open/close shortcut cheat sheet</li>
         <li><code>F</code> – Switch between sans/serif fonts</li>
-        <li><code>L</code> – Switch between dark/light themes</li>
+        <li><code>W</code> – Switch between dark/light themes</li>
         <li><code>I</code> – Import definition file</li>
         <li><code>E</code> – Export definition file</li>
         <li><code>↑</code> – Increase number of words by 10</li>
@@ -48,19 +48,22 @@
         <li><code>U</code> – Leave output unsorted on/off</li>
         <li><code>O</code> – Display only one word per line on/off</li>
         <li><code>A</code> – Display all generation steps on/off</li>
-        <li><code>G</code> – Generate words</li>
+        <li><code>G</code>/<code>Enter</code> – Generate words</li>
         <li><code>C</code> – Copy output</li>
         <li><code>S</code> – Save output</li>
         <li><code>P</code> – Share page</li>
+        <li><code>V</code> – Paste Lexurgy URL</li>
+        <li><code>L</code> – Open output in Lexurgy</li>
         <li><code>X</code> – Clear the definition textarea</li>
       </ul>
-      <button id="close-shortcut-cheats" class="btn btn-primary mr-1" >Close</button>
+      <button id="close-shortcut-cheats" class="btn btn-primary mr-1">Close</button>
     </div>
 
     <main class="container">
       <br />
       <p>
-        Lexifer Plus is an adaptation of <a href="https://lingweenie.org/conlang/lexifer-app.html" target="_blank">Lexifer Online</a> by <a href="https://www.lingweenie.org/" target="_blank">Wm Annis</a> and <a href="https://www.reddit.com/user/bbrk24/" target="_blank">u/bbrk24</a>. See the <a href="https://github.com/bbrk24/lexifer-ts/blob/master/docs/grammar.md" target="_blank">original documentation</a> for more information.
+        Lexifer Plus is an adaptation of <a href="https://lingweenie.org/conlang/lexifer-app.html" target="_blank">Lexifer Online</a> by <a href="https://www.lingweenie.org/" target="_blank">Wm Annis</a> and
+        <a href="https://www.reddit.com/user/bbrk24/" target="_blank">u/bbrk24</a>. See the <a href="https://github.com/bbrk24/lexifer-ts/blob/master/docs/grammar.md" target="_blank">original documentation</a> for more information.
       </p>
 
       <p>
@@ -78,7 +81,7 @@
         <button type="button" class="btn btn-primary mr-1" id="saveFileBtn">Export Definitions</button>
       </p>
 
-      <textarea id="def" rows="13" class="scroll" style="border-radius: 0.25em" title="Type, import or drag-and-drop your definition file here" >
+      <textarea id="def" rows="13" class="scroll" title="Type, import or drag-and-drop your definition file here">
 with: std-ipa-features std-assimilations coronal-metathesis
 
 letters: ʔ a á b ch d e g h i k l m n o p r s t u w y
@@ -96,10 +99,10 @@ reject: (..+)\1+
 
 reject: wu yi w$ y$ h$ ʔʔ (p|t|k|ʔ)h
 filter: nr > tr; mr > pr; ŋ > n
-</textarea>
+      </textarea>
       <br />
       <label for="number">Number of words (leave blank for a paragraph):</label>
-      <input type="number" autocomplete="off" id="number" min="0" fdprocessedid="lz21x" style="border-radius: 0.125em" />
+      <input type="number" autocomplete="off" id="number" min="0" fdprocessedid="lz21x" />
       <br />
       <input type="checkbox" id="unsorted" />
       <label for="unsorted">Leave output unsorted</label>
@@ -112,19 +115,25 @@ filter: nr > tr; mr > pr; ŋ > n
       <br />
       <p>
         <button type="button" class="btn btn-primary mr-1" onclick="genWords()">Generate</button>
-        <button type="button" class="btn btn-primary mr-1" onclick="copyResult()">Copy Output</button>
-        <button type="button" class="btn btn-primary mr-1" id="saveResultBtn">Save Output</button>
-        <button type="button" class="btn btn-primary mr-1" onclick="shareDefinition()">Share Page</button>
+        <button type="button" class="btn btn-primary mr-1" onclick="copyOutput()">Copy Output</button>
+        <button type="button" class="btn btn-primary mr-1" id="saveOutputBtn">Save Output</button>
+        <button type="button" class="btn btn-primary mr-1" onclick="sharePage()">Share Page</button>
       </p>
-      <p id="errors" style="white-space: normal;"></p>
+      <p id="errors"></p>
       <p id="result"></p>
-      <br />
+      <p>
+        <input type="text" class="btn btn-primary mr-1" id="lexurgy-changes" placeholder="Paste a Lexurgy URL with changes here (optional)" />
+      </p>
+      <p>
+        <button type="button" class="btn btn-primary mr-1" onclick="toLexurgy()">Open Output In Lexurgy</button>
+      </p>
     </main>
 
     <footer>
       <p>This adaptation by <a href="https://keras-saryan.github.io/" target="_blank">Keras Saryan</a></p>
       <p>
-        Original <a href="https://lingweenie.org/conlang/lexifer-app.html" target="_blank">Lexifer Online</a> by <a href="https://www.lingweenie.org/" target="_blank">Wm Annis</a> and <a href="https://www.reddit.com/user/bbrk24/" target="_blank">u/bbrk24</a>
+        Original <a href="https://lingweenie.org/conlang/lexifer-app.html" target="_blank">Lexifer Online</a> by <a href="https://www.lingweenie.org/" target="_blank">Wm Annis</a> and
+        <a href="https://www.reddit.com/user/bbrk24/" target="_blank">u/bbrk24</a>
       </p>
       <p>
         <a href="https://creativecommons.org/licenses/by-sa/3.0/us/" target="_blank" title="CC BY-SA"><img src="./assets/cc-by-sa.png" /></a>

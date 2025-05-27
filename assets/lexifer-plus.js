@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const hiddenInput = document.getElementById("hiddenFileInput");
   const loadFileBtn = document.getElementById("loadFileBtn");
   const saveFileBtn = document.getElementById("saveFileBtn");
-  const saveResultBtn = document.getElementById("saveResultBtn");
+  const saveOutputBtn = document.getElementById("saveOutputBtn");
   const defTextarea = document.getElementById("def");
   const resultElement = document.getElementById("result");
   const numberInput = document.getElementById("number");
@@ -76,13 +76,13 @@ document.addEventListener("DOMContentLoaded", () => {
     downloadTextFile("lexifer.def", content);
   });
 
-  saveResultBtn.addEventListener("click", () => {
+  saveOutputBtn.addEventListener("click", () => {
     const content = resultElement.innerText.trim();
     if (!content) return alert("There is no output to save! 🤨");
     downloadTextFile("output.wli", content);
   });
 
-  window.copyResult = async function () {
+  window.copyOutput = async function () {
     const text = resultElement.innerText.trim();
     if (!text) return alert("There is nothing to copy! 🤨");
     try {
@@ -94,7 +94,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  window.shareDefinition = () => {
+  window.sharePage = () => {
+    const changesInput = document.getElementById("lexurgy-changes");
+    const encodedChanges = changesInput ? changesInput.value.trim() : "";
+
     const state = {
       def: defTextarea.value,
       number: numberInput.value || "",
@@ -102,6 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
       onePerLine: onePerLineCheckbox.checked,
       verbose: verboseCheckbox.checked,
       output: resultElement.innerText,
+      encodedChanges: encodedChanges,
     };
 
     try {
@@ -126,6 +130,10 @@ document.addEventListener("DOMContentLoaded", () => {
       if (state.onePerLine !== undefined) onePerLineCheckbox.checked = state.onePerLine;
       if (state.verbose !== undefined) verboseCheckbox.checked = state.verbose;
       if (state.output !== undefined) resultElement.innerText = state.output;
+      const changesInput = document.getElementById("lexurgy-changes");
+      if (state.encodedChanges !== undefined && changesInput) {
+        changesInput.value = state.encodedChanges;
+      }
     } catch (e) {
       console.warn("Failed to parse shared state:", e);
     }
@@ -152,23 +160,23 @@ document.addEventListener("DOMContentLoaded", () => {
   */
 
   document.addEventListener("keydown", (e) => {
-  const isMac = navigator.platform.toUpperCase().includes("MAC");
-  const ctrlOrCmd = isMac ? e.metaKey : e.ctrlKey;
+    const isMac = navigator.platform.toUpperCase().includes("MAC");
+    const ctrlOrCmd = isMac ? e.metaKey : e.ctrlKey;
 
-  if (!(ctrlOrCmd && e.shiftKey)) return;
+    if (!(ctrlOrCmd && e.shiftKey)) return;
 
     switch (e.key.toLowerCase()) {
       case "?":
         e.preventDefault();
         const shortcutCheats = document.getElementById("shortcut-cheats");
-        shortcutCheats.style.display = (shortcutCheats.style.display === "block") ? "none" : "block";
+        shortcutCheats.style.display = shortcutCheats.style.display === "block" ? "none" : "block";
         break;
       case "f":
         e.preventDefault();
         const isCurrentlySans = serifFont.disabled;
         updateFont(!isCurrentlySans);
         break;
-      case "l":
+      case "w":
         e.preventDefault();
         const isCurrentlyDark = !darkTheme.disabled;
         updateTheme(!isCurrentlyDark);
@@ -205,22 +213,45 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
         genWords();
         break;
+      case "enter":
+        e.preventDefault();
+        genWords();
+        break;
       case "c":
         e.preventDefault();
-        copyResult();
+        copyOutput();
         break;
       case "s":
         e.preventDefault();
-        saveResultBtn.click();
+        saveOutputBtn.click();
         break;
       case "p":
         e.preventDefault();
-        shareDefinition();
+        sharePage();
+        break;
+      case "l":
+        e.preventDefault();
+        toLexurgy();
+        break;
+      case "v":
+        e.preventDefault();
+        const changesInput = document.getElementById("lexurgy-changes");
+        if (changesInput) {
+          navigator.clipboard
+            .readText()
+            .then((text) => {
+              changesInput.value = text;
+            })
+            .catch((err) => {
+              console.error("Failed to read clipboard:", err);
+              alert("Could not read from clipboard. 😢");
+            });
+        }
         break;
       case "x":
         e.preventDefault();
         const defTextarea = document.getElementById("def");
-        defTextarea.value = '';
+        defTextarea.value = "";
         break;
     }
   });
@@ -242,4 +273,31 @@ document.addEventListener("DOMContentLoaded", () => {
       shortcutCheats.style.display = "none";
     }
   });
+
+  function toLexurgy() {
+    const output = document.getElementById("result").innerText.trim();
+    let encodedChanges = document.getElementById("lexurgy-changes").value.trim();
+
+    if (!output) {
+      alert("There is no output to send! 🤨");
+      return;
+    }
+
+    if (encodedChanges.includes("changes=")) {
+      const match = encodedChanges.match(/changes=([^&]*)/);
+      if (match) {
+        encodedChanges = match[1];
+      }
+    }
+
+    const encodedInput = btoa(unescape(encodeURIComponent(output)))
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=+$/, "");
+
+    const url = `https://lexurgy-app.vercel.app/sc?changes=${encodedChanges}&input=${encodedInput}`;
+    window.open(url, "_blank");
+  }
+
+  window.toLexurgy = toLexurgy;
 });

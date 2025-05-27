@@ -31,20 +31,51 @@ body {
 
 p {
   text-align: justify !important;
-  text-justify: inter-word !important;
 }
 
 a {
   color: #de0000 !important;
 }
 
+#shortcut-cheats {
+  display: none;
+  position: fixed;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #777777;
+  color: #ffffff;
+  padding: 2em;
+  border-radius: 0.5em;
+  max-width: 650px;
+  max-height: 80vh;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 0 20px #00000080;
+  font-size: 0.95rem;
+}
+
+#shortcut-list {
+  margin: 1em 0em;
+  padding-left: 1em;
+}
+
 #errors {
   color: #de0000 !important;
+  white-space: normal !important;
 }
 
 #number {
   width: 5em !important;
   font-family: "Cousine", monospace !important;
+  border-radius: 0.125em !important;
+}
+
+#lexurgy-changes {
+  font-family: "Cousine", monospace !important;
+  text-align: left !important;
+  padding: 0.2em 0.4em !important;
+  width: 100% !important;
 }
 
 textarea {
@@ -52,6 +83,7 @@ textarea {
   font-size: 0.95rem;
   font-weight: 400;
   border: 1px solid #555555;
+  border-radius: 0.25em;
   width: 100% !important;
   padding: 0.2em 0.4em !important;
   resize: both !important;
