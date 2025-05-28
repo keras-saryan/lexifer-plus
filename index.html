@@ -84,7 +84,7 @@
         <button type="button" class="btn btn-primary mr-1" id="saveFileBtn">Export Definitions</button>
       </p>
 
-      <textarea id="def" rows="13" class="scroll" title="Type, import or drag-and-drop your definition file here">
+      <textarea id="def" rows="13" class="scroll" title="Type, paste, import or drag-and-drop your definition file here">
 with: std-ipa-features std-assimilations coronal-metathesis
 
 letters: ʔ a á b ch d e g h i k l m n o p r s t u w y
@@ -120,12 +120,12 @@ filter: nr > tr; mr > pr; ŋ > n
         <button type="button" class="btn btn-primary mr-1" onclick="genWords()">Generate</button>
         <button type="button" class="btn btn-primary mr-1" onclick="copyOutput()">Copy Output</button>
         <button type="button" class="btn btn-primary mr-1" id="saveOutputBtn">Save Output</button>
-        <button type="button" class="btn btn-primary mr-1" onclick="sharePage()">Share Page</button>
+        <button type="button" class="btn btn-primary mr-1" title="⚠️ Known issue: Shareable URLs that are too long (over ~8000 characters) are unlikely to open." onclick="sharePage()">Share Page</button>
       </p>
       <p id="errors"></p>
       <p id="result"></p>
       <p>
-        <input type="text" class="btn btn-primary mr-1" id="lexurgy-changes" placeholder="Paste a Lexurgy URL with changes here (optional)" />
+        <input type="text" class="btn btn-primary mr-1" id="lexurgy-changes" placeholder="Paste a Lexurgy URL with changes here (optional)" title="⚠️ Known issue: If your Lexurgy URL is too long this may prevent the shareable Lexifer URL from loading in your browser." />
       </p>
       <p>
         <button type="button" class="btn btn-primary mr-1" onclick="toLexurgy()">Open Output In Lexurgy</button>
