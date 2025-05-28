@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const unsortedCheckbox = document.getElementById("unsorted");
   const onePerLineCheckbox = document.getElementById("one-per-line");
   const verboseCheckbox = document.getElementById("verbose");
+  const changesInput = document.getElementById("lexurgy-changes");
 
   const downloadTextFile = (filename, content) => {
     const blob = new Blob([content], { type: "text/plain" });
@@ -26,9 +27,11 @@ document.addEventListener("DOMContentLoaded", () => {
     URL.revokeObjectURL(url);
   };
 
-  const encodeState = (state) => btoa(encodeURIComponent(JSON.stringify(state)));
+  const encodeState = (state) =>
+    LZString.compressToEncodedURIComponent(JSON.stringify(state));
 
-  const decodeState = (encoded) => JSON.parse(decodeURIComponent(atob(encoded)));
+  const decodeState = (encoded) =>
+    JSON.parse(LZString.decompressFromEncodedURIComponent(encoded));
 
   const updateTheme = (isDark) => {
     lightTheme.disabled = isDark;
@@ -42,8 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
   updateTheme(savedTheme === "dark" || (!savedTheme && prefersDark));
 
   themeToggle.addEventListener("click", () => {
-    const isCurrentlyDark = !darkTheme.disabled;
-    updateTheme(!isCurrentlyDark);
+    updateTheme(darkTheme.disabled);
   });
 
   const updateFont = (useSans) => {
@@ -53,27 +55,22 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const savedFont = localStorage.getItem("fontface");
-  const prefersSans = savedFont === "sans" || !savedFont;
-  updateFont(prefersSans);
+  updateFont(savedFont === "sans" || !savedFont);
 
   fontToggle.addEventListener("click", () => {
-    const isCurrentlySans = serifFont.disabled;
-    updateFont(!isCurrentlySans);
+    updateFont(!serifFont.disabled);
   });
 
   loadFileBtn.addEventListener("click", () => hiddenInput.click());
 
   hiddenInput.addEventListener("change", async () => {
     const file = hiddenInput.files[0];
-    if (!file) return;
-    const text = await file.text();
-    defTextarea.value = text;
+    if (file) defTextarea.value = await file.text();
   });
 
   saveFileBtn.addEventListener("click", () => {
-    const content = defTextarea.value;
-    if (!content.trim()) return alert("Definition is empty. 🤨");
-    downloadTextFile("lexifer.def", content);
+    if (!defTextarea.value.trim()) return alert("Definition is empty. 🤨");
+    downloadTextFile("lexifer.def", defTextarea.value);
   });
 
   saveOutputBtn.addEventListener("click", () => {
@@ -95,9 +92,6 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   window.sharePage = () => {
-    const changesInput = document.getElementById("lexurgy-changes");
-    const encodedChanges = changesInput ? changesInput.value.trim() : "";
-
     const state = {
       def: defTextarea.value,
       number: numberInput.value || "",
@@ -105,7 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
       onePerLine: onePerLineCheckbox.checked,
       verbose: verboseCheckbox.checked,
       output: resultElement.innerText,
-      encodedChanges: encodedChanges,
+      encodedChanges: changesInput ? changesInput.value.trim() : "",
     };
 
     try {
@@ -120,7 +114,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const params = new URLSearchParams(window.location.search);
   const encoded = params.get("state");
-
   if (encoded) {
     try {
       const state = decodeState(encoded);
@@ -130,7 +123,6 @@ document.addEventListener("DOMContentLoaded", () => {
       if (state.onePerLine !== undefined) onePerLineCheckbox.checked = state.onePerLine;
       if (state.verbose !== undefined) verboseCheckbox.checked = state.verbose;
       if (state.output !== undefined) resultElement.innerText = state.output;
-      const changesInput = document.getElementById("lexurgy-changes");
       if (state.encodedChanges !== undefined && changesInput) {
         changesInput.value = state.encodedChanges;
       }
@@ -144,9 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
     if (file?.name.endsWith(".def")) {
-      const text = await file.text();
-      defTextarea.value = text;
-      localStorage.setItem("lexifer-def", text);
+      defTextarea.value = await file.text();
     }
   });
 
@@ -162,24 +152,22 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("keydown", (e) => {
     const isMac = navigator.platform.toUpperCase().includes("MAC");
     const ctrlOrCmd = isMac ? e.metaKey : e.ctrlKey;
-
+    
     if (!(ctrlOrCmd && e.shiftKey)) return;
 
     switch (e.key.toLowerCase()) {
       case "?":
         e.preventDefault();
-        const shortcutCheats = document.getElementById("shortcut-cheats");
-        shortcutCheats.style.display = shortcutCheats.style.display === "block" ? "none" : "block";
+        const cheats = document.getElementById("shortcut-cheats");
+        cheats.style.display = cheats.style.display === "block" ? "none" : "block";
         break;
       case "f":
         e.preventDefault();
-        const isCurrentlySans = serifFont.disabled;
-        updateFont(!isCurrentlySans);
+        updateFont(!serifFont.disabled);
         break;
-      case "w":
+      case "h":
         e.preventDefault();
-        const isCurrentlyDark = !darkTheme.disabled;
-        updateTheme(!isCurrentlyDark);
+        updateTheme(darkTheme.disabled);
         break;
       case "i":
         e.preventDefault();
@@ -188,6 +176,22 @@ document.addEventListener("DOMContentLoaded", () => {
       case "e":
         e.preventDefault();
         saveFileBtn.click();
+        break;
+      case "v":
+        e.preventDefault();
+        navigator.clipboard
+          .readText()
+          .then((text) => {
+            defTextarea.value = text;
+          })
+          .catch((err) => {
+            console.error("Failed to read clipboard:", err);
+            alert("Could not read from clipboard. 😢");
+          });
+        break;
+      case "x":
+        e.preventDefault();
+        defTextarea.value = "";
         break;
       case "arrowup":
         e.preventDefault();
@@ -210,9 +214,6 @@ document.addEventListener("DOMContentLoaded", () => {
         verboseCheckbox.checked = !verboseCheckbox.checked;
         break;
       case "g":
-        e.preventDefault();
-        genWords();
-        break;
       case "enter":
         e.preventDefault();
         genWords();
@@ -233,9 +234,8 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
         toLexurgy();
         break;
-      case "v":
+      case "y":
         e.preventDefault();
-        const changesInput = document.getElementById("lexurgy-changes");
         if (changesInput) {
           navigator.clipboard
             .readText()
@@ -248,10 +248,9 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
         break;
-      case "x":
+      case "k":
         e.preventDefault();
-        const defTextarea = document.getElementById("def");
-        defTextarea.value = "";
+        if (changesInput) changesInput.value = "";
         break;
     }
   });
@@ -275,19 +274,13 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   function toLexurgy() {
-    const output = document.getElementById("result").innerText.trim();
-    let encodedChanges = document.getElementById("lexurgy-changes").value.trim();
+    const output = resultElement.innerText.trim();
+    if (!output) return alert("There is no output to send! 🤨");
 
-    if (!output) {
-      alert("There is no output to send! 🤨");
-      return;
-    }
-
+    let encodedChanges = changesInput?.value.trim() || "";
     if (encodedChanges.includes("changes=")) {
       const match = encodedChanges.match(/changes=([^&]*)/);
-      if (match) {
-        encodedChanges = match[1];
-      }
+      if (match) encodedChanges = match[1];
     }
 
     const encodedInput = btoa(unescape(encodeURIComponent(output)))
